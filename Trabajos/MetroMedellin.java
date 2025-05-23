@@ -15,11 +15,12 @@ public class MetroMedellin extends Robot implements Directions {
 
     private static final Lock lock = new ReentrantLock();
     private static final Condition condition = lock.newCondition();
-    private static boolean[] estaciones = new boolean[36];
+    private static boolean[] estaciones = new boolean[50];
     private static boolean salida = false;
     private static int llenado = 0;
     private static boolean setupSanAntonio = false;
     private static boolean setupSanJavier = false;
+    private static boolean saliendo = false;
     static {
         for (int i = 0; i < estaciones.length; i++) {
             estaciones[i] = true;
@@ -36,6 +37,37 @@ public class MetroMedellin extends Robot implements Directions {
         try {
             while (!estaciones[estacion]) {
                 System.out.println("Esperando que se active la estación " + estacion + ".");
+                condition.await();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public static void esperarVia() {
+        lock.lock();
+        try {
+            while (!estaciones[46] && !estaciones[47] && !estaciones[49]) {
+                System.out.println("Esperando que se libere la via.");
+                condition.await();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            lock.unlock();
+            desactivar(49);
+            desactivar(46);
+            desactivar(47);
+        }
+    }
+
+    public static void esperarViaA1() {
+        lock.lock();
+        try {
+            while (!estaciones[46] && !estaciones[47]) {
+                System.out.println("Esperando que se libere la via.");
                 condition.await();
             }
         } catch (InterruptedException e) {
@@ -662,11 +694,30 @@ public class MetroMedellin extends Robot implements Directions {
         turnLeft();
         move();
         move();
-        esperarEstacion(16); //
+        esperar(16);
+        wait(250);
+        desactivar(16); //
         move();
+        pickBeeper();
+        wait(3000);
+        putBeeper();
+        esperar(45);
+        wait(250);
+        activar(16); //
+        desactivar(45); //
+        move();
+        esperar(46);
+        wait(250);
+        activar(45); //
+        desactivar(46);
         move();
         turnLeft();
+        esperar(47);
+        wait(250);
+        activar(46);
+        desactivar(47);
         move();
+        activar(47);
         move();
         esperarEstacion(17); //
         move();
@@ -745,11 +796,28 @@ public class MetroMedellin extends Robot implements Directions {
         turnLeft();
         move();
         move();
-        esperarEstacion(7); //
+        esperar(7);
+        wait(250);
+        desactivar(7); //
         move();
+        pickBeeper();
+        wait(3000);
+        putBeeper();
+        esperar(48);
+        wait(250);
+        desactivar(48); //
+        activar(7); //
+        move();
+        wait(250);
+        esperar(49);
+        wait(500);
+        esperar(49);
+        desactivar(49);
+        activar(48);
         move();
         turnRight();
         esperarEstacion(8); //
+        activar(49);
         move();
         move();
         turnRight();
@@ -787,7 +855,7 @@ public class MetroMedellin extends Robot implements Directions {
         move();
     }
 
-    public void lineaB2() {
+    public int lineaB2() {
         desactivarSalida(2); //
         pickBeeper();
         wait(3000);
@@ -808,31 +876,95 @@ public class MetroMedellin extends Robot implements Directions {
         move();
         esperarEstacion(27); //
         esperarSanAntonio(); //
+        esperar(34); //
+        wait(250);
+        desactivar(34); //
         move();
+        esperar(35); //
+        wait(250);
+        activar(34); //
+        desactivar(35); //
         move();
         esperar(28); //
+        if (!salida) {
+            wait(250);
+            desactivar(28);
+            activar(35);
+            move();
+            pickBeeper();
+            wait(3000);
+            putBeeper();
+        } else {
+            desactivar(28); //
+            activar(35);
+            move();
+        }
+        esperar(36);
         wait(250);
+        activar(28);
+        desactivar(36);
         move();
-        desactivar(28); //
-        pickBeeper();
-        wait(3000);
-        putBeeper();
-        esperar(33); // NO ES ESTACION, PUNTO INTERMEDIO
+        esperar(37);
         wait(250);
-        activar(28); //
-        move();
+        activar(36);
+        desactivar(37);
         move();
         turnLeft();
-        desactivar(33); // NO ES ESTACION, PUNTO INTERMEDIO
-        esperarSalida(3); //
-        activar(33); // NO ES ESTACION, PUNTO INTERMEDIO
-        desactivarSalida(3); //
-        wait(250);
-        move();
-        turnRight();
-        move();
-        turnLeft();
-        turnLeft();
+        esperar(38);
+        if (!salida) {
+            esperarSalida(3);
+            activar(37);
+            desactivarSalida(3);
+            wait(250);
+            move();
+            turnRight();
+            move();
+            turnLeft();
+            turnLeft();
+            return 1;
+        } else {
+            esperarSalida(3);
+            wait(350);
+            activar(37);
+            desactivar(38);
+            move();
+            turnLeft();
+            esperar(39);
+            wait(250);
+            activar(38);
+            desactivar(39);
+            move();
+            esperar(40);
+            wait(250);
+            activar(39);
+            desactivar(40);
+            move();
+            esperar(41);
+            wait(250);
+            activar(40);
+            desactivar(41);
+            move();
+            turnRight();
+            esperar(42);
+            wait(250);
+            desactivar(42);
+            activar(41);
+            move();
+            esperar(43);
+            wait(250);
+            activar(42);
+            desactivar(43);
+            move();
+            esperar(44);
+            wait(250);
+            activar(43);
+            desactivar(44);
+            move();
+            wait(3000);
+            esperarVia();
+            lineaAB();
+            return 2;
+        }
     }
 
     public void lineaB1() {
@@ -840,11 +972,23 @@ public class MetroMedellin extends Robot implements Directions {
         pickBeeper();
         wait(3000);
         putBeeper();
+        esperar(38);
+        wait(250);
         activarSalida(3); //
+        desactivar(38);
         move();
+        esperar(39);
+        activar(38);
+        desactivar(39);
         move();
         esperarEstacion(29); //
+        activar(39);
+        esperar(41);
+        wait(250);
+        activar(40);
+        desactivar(41);
         move();
+        activar(41);
         move();
         esperarEstacion(30); //
         move();
@@ -863,6 +1007,65 @@ public class MetroMedellin extends Robot implements Directions {
         move();
         turnLeft();
         esperarSalida(2); //
+        wait(250);
+        move();  
+    }
+
+    public void lineaAB() {
+        desactivar(49);
+        desactivar(46);
+        desactivar(47);
+        desactivar(46);
+        wait(250);
+        move();
+        turnRight();
+        desactivar(47);
+        wait(250);
+        move();
+        activar(46);
+        turnLeft();
+        desactivar(49);
+        wait(1000);
+        desactivar(49);
+        move();
+        desactivar(49);
+        activar(47);
+        esperarEstacion(8); //
+        activar(44);
+        activar(49);
+        move();
+        move();
+        turnRight();
+        move();
+        move();
+        turnLeft();
+        move();
+        esperarEstacion(9); //
+        move();
+        turnRight();
+        move();
+        move();
+        turnLeft();
+        move();
+        esperarEstacion(10); //
+        move();
+        turnRight();
+        move();
+        turnLeft();
+        move();
+        move();
+        esperarEstacion(11); //
+        move();
+        move();
+        move();
+        turnRight();
+        move();
+        esperarEstacion(12); //
+        move();
+        turnLeft();
+        move();
+        turnLeft();
+        esperarSalida(1); //
         wait(250);
         move();
     }
@@ -1193,7 +1396,8 @@ class lineaA extends Thread {
 
 class lineaB extends Thread {
     private MetroMedellin robot;
-    private boolean SanAntonio = false;
+    private boolean SanAntonio;
+    private int num = 1;
 
     public lineaB(MetroMedellin robot, boolean SanAntonio) {
         this.robot = robot;
@@ -1204,21 +1408,17 @@ class lineaB extends Thread {
     public void run() {
         while (!(robot.isCondicionActiva())) {
             if (!SanAntonio) {
-                robot.lineaB2();
+                num = robot.lineaB2();
                 SanAntonio = true;
             }
-            if (!(robot.isCondicionActiva())) {
+            if (SanAntonio && num == 1) {
                 robot.lineaB1();
                 SanAntonio = false;
+                if (robot.isCondicionActiva()) {
+                    robot.lineaB2();
+                }
             }
         }
-        if (!SanAntonio) {
-            robot.lineaB2();
-        }
-        robot.move();
-        robot.move();
-        robot.move();
-        robot.move();
-        robot.turnRight();
+        robot.entrar();
     }
 }
