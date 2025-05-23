@@ -15,19 +15,55 @@ public class MetroMedellin extends Robot implements Directions {
 
     private static final Lock lock = new ReentrantLock();
     private static final Condition condition = lock.newCondition();
-    private static boolean[] estaciones = new boolean[28];
+    private static boolean[] estaciones = new boolean[36];
+    private static boolean salida = false;
+    private static int llenado = 0;
+    private static boolean setupSanAntonio = false;
+    private static boolean setupSanJavier = false;
     static {
         for (int i = 0; i < estaciones.length; i++) {
             estaciones[i] = true;
         }
     }
-    private static boolean[] estacionesSalida = {true, true, true};
+    private static boolean[] estacionesSalida = {true, true, true, true};
+
+    public boolean isCondicionActiva() {
+        return salida;
+    }
 
     public static void esperar(int estacion) {
         lock.lock();
         try {
             while (!estaciones[estacion]) {
                 System.out.println("Esperando que se active la estación " + estacion + ".");
+                condition.await();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public static void esperarSanAntonio() {
+        lock.lock();
+        try {
+            while (!setupSanAntonio) {
+                System.out.println("Esperando que termine el setup de San Antonio.");
+                condition.await();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public static void esperarSanJavier() {
+        lock.lock();
+        try {
+            while (!setupSanJavier) {
+                System.out.println("Esperando que termine el setup de San Javier.");
                 condition.await();
             }
         } catch (InterruptedException e) {
@@ -141,6 +177,72 @@ public class MetroMedellin extends Robot implements Directions {
         }
     }
 
+    public void entrar() {
+        int num = 32 - llenado;
+        llenado++;
+        moveUntilWall();
+        turnLeft();
+        move();
+        move();
+        turnRight();
+        move();
+        turnRight();
+        move();
+        Runnable[] camino = new Runnable[] {
+            () -> {
+                move();
+                turnLeft();
+            },
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> {
+                move();
+                turnLeft();
+            },
+            () -> {
+                move();
+                turnLeft();
+            },
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> {
+                move();
+                turnRight();
+            },
+            () -> move(),
+            () -> {
+                move();
+                turnLeft();
+            },
+            () -> move(), // x == 32
+        };
+
+        for (int i = 0; i < num && i < camino.length; i++) {
+            camino[i].run();
+        }
+    }
+
     public void moveUntilWall() {
         while (frontIsClear()) {
             move();
@@ -216,18 +318,6 @@ public class MetroMedellin extends Robot implements Directions {
         Runnable[] camino = new Runnable[] {
             () -> {
                 move();
-            },                            // x == 1
-            () -> {
-                move();
-            },   
-            () -> {
-                move();
-            },   
-            () -> {
-                move();
-            },   
-            () -> {
-                move();
             },   
             () -> {
                 move();
@@ -261,7 +351,9 @@ public class MetroMedellin extends Robot implements Directions {
             () -> {
                 wait(1000);
                 esperarSalida(0);
-                move();  // x == 14
+                wait(250);
+                move();  // x == 10
+                wait(1000);
             },   
         };
 
@@ -270,27 +362,113 @@ public class MetroMedellin extends Robot implements Directions {
         }
     }
 
-    public void startNiquia(int x) {
+    public void setupNiquia(int x) {
+        Runnable[] camino = new Runnable[] {
+            () -> move(),   
+            () -> move(), 
+            () -> move(), 
+            () -> move(), 
+            () -> move(), 
+            () -> {
+                turnRight();
+                move();
+            },   
+            () -> move(), 
+            () -> move(),  
+            () -> {
+                turnLeft();
+                move();
+            },   
+            () -> {
+                turnLeft();
+                wait(1000);
+                esperarSalida(1);
+                wait(250);
+                move();  // x == 10
+                wait(1000);
+            },   
+        };
+
+        for (int i = x - 1; i < camino.length; i++) {
+        camino[i].run();
+        }
+    }
+
+    public void setupSanJavier(int x) {
+        Runnable[] camino = new Runnable[] {
+            () -> {
+                move();
+                setupSanJavier = true;
+            },     
+            () -> {
+                move();
+                turnLeft();
+            },   
+            () -> {
+                move();
+                turnLeft();
+            },
+            () -> {
+                wait(1000);
+                esperarSalida(2);
+                wait(250);
+                move();
+            },
+        };
+
+        for (int i = x - 1; i < camino.length; i++) {
+        camino[i].run();
+        }
+    }
+
+    public void setupSanAntonio(int x) {
+        Runnable[] camino = new Runnable[] {
+            () -> {
+                move();
+                setupSanAntonio = true;
+            },   
+            () -> move(), 
+            () -> {
+                move();
+            },
+            () -> {
+                turnLeft();
+                esperarSalida(3);
+                wait(250);
+                move();
+                turnRight();
+                move();
+                turnLeft();
+                turnLeft();
+            },   
+        };
+
+        for (int i = x - 1; i < camino.length; i++) {
+        camino[i].run();
+        }
+    }
+
+    public void startNiquiaA(int x) {
         moveUntilWall();    
         turnLeft();
         move();
 
         Runnable[] camino = new Runnable[] {
-            () -> move(), // x == 1
+            () -> move(),
             () -> {
                 turnRight();
                 move();
-            }, // x == 2
-            () -> move(), // x == 3
-            () -> move(), // x == 4
+            },
+            () -> move(),
+            () -> move(),
             () -> {
                 turnLeft();
                 move();
-            }, // x == 5
+            },
             () -> {
                 turnLeft();
                 move();
-            } // x == 6
+            }
         };
 
         for (int i = 0; i < x && i < camino.length; i++) {
@@ -298,7 +476,47 @@ public class MetroMedellin extends Robot implements Directions {
         }
     }
 
-    public void startSanJavier(int x) {
+    public void startNiquiaB(int x) {
+        startEstrella(14);
+        moveUntilWall();
+        turnLeft();
+        moveUntilWall();
+        turnRight();
+        move();
+        turnLeft();
+        moveUntilWall();
+        turnRight();
+        moveUntilWall();
+        turnLeft();
+        moveUntilWall();
+        turnLeft();
+        moveUntilWall();
+        turnRight();
+        moveUntilWall();
+        turnRight();
+        moveUntilWall();
+        turnLeft();
+        moveUntilWall();
+        turnRight();
+        moveUntilWall();
+        turnLeft();
+        moveUntilWall();
+        turnRight();
+        move();
+        turnLeft();
+        Runnable[] camino = new Runnable[] {
+            () -> move(),
+            () -> move(),
+            () -> move(),
+            () -> move(), // x = 4
+        };
+        
+        for (int i = 0; i < x && i < camino.length; i++) {
+            camino[i].run();
+        }
+    }
+
+    public void startSanJavierA(int x) {
         move();
         turnRight();
         moveUntilWall();
@@ -349,11 +567,72 @@ public class MetroMedellin extends Robot implements Directions {
             camino[i].run();
         }
     }
+
+    public void startSanJavierB(int x) {
+        move();
+        turnRight();
+        moveUntilWall();
+        turnRight();
+        move();
+        turnLeft();
+        moveUntilWall();
+        turnRight();
+        moveUntilWall();
+        turnLeft();
+        moveUntilWall();
+        turnRight();
+        moveUntilWall();
+        turnLeft();
+        for (int i = 0; i < 9; i++) {
+            move();
+        }
+        turnRight();
+        moveUntilWall();
+        turnRight();
+        move();
+        turnLeft();
+        moveUntilWall();
+        turnRight();
+        moveUntilWall();
+        turnLeft();
+        move();
+        turnLeft();
+        moveUntilWall();
+        turnLeft();
+        moveUntilWall();
+        turnRight();
+        move();
+        turnLeft();
+        for (int i=0; i<4; i++) {
+            move();
+        }
+
+        Runnable[] camino = new Runnable[] {
+            () -> move(), // x == 1
+            () -> move(), // x == 2
+            () -> move(), // x == 3
+            () -> move(), // x == 4
+            () -> {
+                turnLeft();
+                move();
+                turnRight();
+                move();
+                turnLeft();
+                turnLeft();
+            }
+        };
+
+        for (int i = 0; i < x && i < camino.length; i++) {
+            camino[i].run();
+        }
+    }
     
     public void lineaA1() {
+        desactivarSalida(1); //
         pickBeeper();
         wait(3000);
         putBeeper();
+        activarSalida(1); //
         move();
         move();
         move();
@@ -361,30 +640,21 @@ public class MetroMedellin extends Robot implements Directions {
         move();
         move();
         move();
-        move();
-        pickBeeper();
-        wait(3000);
-        putBeeper();
+        esperarEstacion(13); //
         move();
         move();
         turnRight();
         move();
         turnLeft();
         move();
-        move();
-        pickBeeper();
-        wait(3000);
-        putBeeper();
+        esperarEstacion(14); //
         move();
         turnRight();
         move();
         move();
         turnLeft();
         move();
-        move();
-        pickBeeper();
-        wait(3000);
-        putBeeper();
+        esperarEstacion(15); //
         move();
         turnRight();
         move();
@@ -392,72 +662,49 @@ public class MetroMedellin extends Robot implements Directions {
         turnLeft();
         move();
         move();
-        move();
-        pickBeeper();
-        wait(3000);
-        putBeeper();
+        esperarEstacion(16); //
         move();
         move();
         turnLeft();
         move();
         move();
-        move();
-        pickBeeper();
-        wait(3000);
-        putBeeper();
+        esperarEstacion(17); //
         move();
         move();
         turnRight();
         move();
+        esperarEstacion(18); //
         move();
-        pickBeeper();
-        wait(3000);
-        putBeeper();
+        esperarEstacion(19); //
         move();
-        move();
-        pickBeeper();
-        wait(3000);
-        putBeeper();
-        move();
-        move();
-        pickBeeper();
-        wait(3000);
-        putBeeper();
+        esperarEstacion(20); //
         move();
         turnRight();
-        move();
-        pickBeeper();
-        wait(3000);
-        putBeeper();
+        esperarEstacion(21); //
         move();
         move();
         turnLeft();
         move();
-        move();
-        pickBeeper();
-        wait(3000);
-        putBeeper();
+        esperarEstacion(22); //
         move();
         move();
-        move();
-        pickBeeper();
-        wait(3000);
-        putBeeper();
+        esperarEstacion(23); //
         move();
         turnRight();
         move();
         turnLeft();
         move();
-        move();
-        pickBeeper();
-        wait(3000);
-        putBeeper();
+        esperarEstacion(24); //
         move();
         turnRight();
+        esperarEstacion(25); //
         move();
-        pickBeeper();
-        wait(3000);
-        putBeeper();
+        turnLeft();
+        move();
+        turnLeft();
+        esperarSalida(0); //
+        wait(250);
+        move();
     }
 
     public void lineaA2() {
@@ -530,86 +777,93 @@ public class MetroMedellin extends Robot implements Directions {
         move();
         turnRight();
         move();
-        move();
-        move();
-        turnLeft();
-        move();
-        turnLeft();
         esperarEstacion(12); //
+        move();
+        turnLeft();
+        move();
+        turnLeft();
+        esperarSalida(1); //
+        wait(250);
+        move();
     }
 
-    public void lineaB() {
+    public void lineaB2() {
+        desactivarSalida(2); //
         pickBeeper();
         wait(3000);
         putBeeper();
+        activarSalida(2); //
         move();
         move();
         turnLeft();
         move();
         move();
         move();
-        move();
-        pickBeeper();
-        wait(3000);
-        putBeeper();
+        esperarEstacion(26); //
         move();
         turnRight();
         move();
         turnLeft();
         move();
         move();
+        esperarEstacion(27); //
+        esperarSanAntonio(); //
         move();
+        move();
+        esperar(28); //
+        wait(250);
+        move();
+        desactivar(28); //
         pickBeeper();
         wait(3000);
         putBeeper();
-        move();
-        move();
-        move();
-        pickBeeper();
-        wait(3000);
-        putBeeper();
+        esperar(33); // NO ES ESTACION, PUNTO INTERMEDIO
+        wait(250);
+        activar(28); //
         move();
         move();
         turnLeft();
-        move();
-        turnRight();
-        move();
-        pickBeeper();
-        wait(3000);
-        putBeeper();
-        turnLeft();
-        turnLeft();
-        move();
-        move();
-        move();
-        pickBeeper();
-        wait(3000);
-        putBeeper();
-        move();
-        move();
-        move();
-        pickBeeper();
-        wait(3000);
-        putBeeper();
-        move();
+        desactivar(33); // NO ES ESTACION, PUNTO INTERMEDIO
+        esperarSalida(3); //
+        activar(33); // NO ES ESTACION, PUNTO INTERMEDIO
+        desactivarSalida(3); //
+        wait(250);
         move();
         turnRight();
         move();
         turnLeft();
-        move();
-        move();
+        turnLeft();
+    }
+
+    public void lineaB1() {
+        desactivarSalida(3); //
         pickBeeper();
         wait(3000);
         putBeeper();
+        activarSalida(3); //
         move();
+        move();
+        esperarEstacion(29); //
+        move();
+        move();
+        esperarEstacion(30); //
         move();
         move();
         turnRight();
         move();
+        turnLeft();
+        move();
+        esperarEstacion(31); //
+        esperarSanJavier(); //
+        moveUntilWall();
+        turnRight();
+        esperarEstacion(32); //
         move();
         turnLeft();
         move();
         turnLeft();
+        esperarSalida(2); //
+        wait(250);
         move();
     }
 
@@ -670,14 +924,14 @@ public class MetroMedellin extends Robot implements Directions {
             thread.start();
             threads.add(thread);
         }
-        for (int i = 4; i < 7; i++) {
+        for (int i = 4; i < 11; i++) {
             int number = 6 - i;
             Thread thread = new inicioNiquiaC(robotsLineaA[i], number);
             //wait(1000);
             thread.start();
             threads.add(thread);
         }
-        for (int i =7 ; i < 17; i++) {
+        for (int i = 11 ; i < 17; i++) {
             int number = 21 - i;
             Thread thread = new inicioEstrellaA(robotsLineaA[i], number);
             //wait(1000);
@@ -692,7 +946,7 @@ public class MetroMedellin extends Robot implements Directions {
             threads.add(thread);
         }
         for (int i = 0; i < 10; i++) {
-            int number = 9 - i;
+            int number = i;
             Thread thread = new inicioSanJavierA(robotsLineaB[i], number);
             //wait(1000);
             thread.start();
@@ -710,13 +964,24 @@ public class MetroMedellin extends Robot implements Directions {
         System.out.println("Presione enter para iniciar el movimiento de las lineas a las 4:20");
         System.out.flush();
         Scanner am430 = new Scanner(System.in);
-        String placeholder = am430.nextLine();
+        String placeholder1 = am430.nextLine();
 
         Thread thread2 = new setupEstrella(robotsLineaA);
+        Thread thread3 = new setupNiquia(robotsLineaA);
+        Thread thread4 = new setupSanAntonio(robotsLineaB);
+        Thread thread5 = new setupSanJavier(robotsLineaB);
         thread2.start();
+        thread3.start();
+        thread4.start();
+        wait(3500);
+        thread5.start();
+        System.out.println("Presione enter para iniciar el movimiento de las lineas a las 4:20");
+        System.out.flush();
+        Scanner pm11 = new Scanner(System.in);
+        String placeholder2 = pm11.nextLine();
+        salida = true;
     }
 }
-
 
 class inicioNiquiaA extends Thread {
     private MetroMedellin robot;
@@ -730,7 +995,7 @@ class inicioNiquiaA extends Thread {
     @Override
     public void run() {
         robot.salir(5);
-        robot.startNiquia(number);
+        robot.startNiquiaA(number);
     }
 }
 
@@ -746,7 +1011,7 @@ class inicioNiquiaB extends Thread {
     @Override
     public void run() {
         robot.salir(4);
-        robot.startNiquia(number);
+        robot.startNiquiaA(number);
     }
 }
 
@@ -762,7 +1027,11 @@ class inicioNiquiaC extends Thread {
     @Override
     public void run() {
         robot.salir(3);
-        robot.startNiquia(number);
+        if (number < 0) {
+            robot.startNiquiaB(number + 5);
+        } else {
+            robot.startNiquiaA(number);
+        }
     }
 }
 
@@ -778,7 +1047,7 @@ class inicioEstrellaA extends Thread {
     @Override
     public void run() {
         robot.salir(3);
-        robot.startEstrella(number);
+        robot.startEstrella(number+4);
     }
 }
 
@@ -794,7 +1063,7 @@ class inicioEstrellaB extends Thread {
     @Override
     public void run() {
         robot.salir(1);
-        robot.startEstrella(number);
+        robot.startEstrella(number+4);
     }
 }
 
@@ -810,20 +1079,11 @@ class inicioSanJavierA extends Thread {
     @Override
     public void run() {
         robot.salir(1);
-        robot.startSanJavier(number);
-    }
-}
-
-class lineaA1 extends Thread {
-    private MetroMedellin robot;
-
-    public lineaA1(MetroMedellin robot) {
-        this.robot = robot;
-    }
-
-    @Override
-    public void run() {
-        robot.lineaA1();
+        if (number < 5) {
+            robot.startSanJavierB(5-number);
+        } else {
+            robot.startSanJavierA(9-(number-5));
+        }
     }
 }
 
@@ -836,38 +1096,129 @@ class setupEstrella extends Thread {
 
     @Override
     public void run() {
-        for (int i = 0; i<15; i++) {
-            int robot = i + 7;
-            int number = 15 - i;
+        for (int i = 0; i<11; i++) {
+            int robot = i + 11;
+            int number = 11 - i;
             robots[robot].setupEstrella(number);
-            Thread thread = new lineaA2(robots[robot], number);
+            Thread thread = new lineaA(robots[robot], false);
             thread.start();
         }
     }
 }
 
-class lineaA2 extends Thread {
-    private MetroMedellin robot;
+class setupNiquia extends Thread {
+    private MetroMedellin[] robots;
 
-    public lineaA2(MetroMedellin robot, int number) {
-        this.robot = robot;
+    public setupNiquia(MetroMedellin[] robots) {
+        this.robots = robots;
     }
 
     @Override
     public void run() {
-        robot.lineaA2();
+        for (int i = 0; i<11; i++) {
+            int robot = i;
+            int number = 11 - i;
+            robots[robot].setupNiquia(number);
+            Thread thread = new lineaA(robots[robot], true);
+            thread.start();
+        }
+    }
+}
+
+class setupSanJavier extends Thread {
+    private MetroMedellin[] robots;
+
+    public setupSanJavier(MetroMedellin[] robots) {
+        this.robots = robots;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 0; i<5; i++) {
+            int robot = i + 5;
+            int number = 5 - i;
+            robots[robot].setupSanJavier(number);
+            Thread thread = new lineaB(robots[robot], false);
+            thread.start();
+        }
+    }
+}
+
+class setupSanAntonio extends Thread {
+    private MetroMedellin[] robots;
+
+    public setupSanAntonio(MetroMedellin[] robots) {
+        this.robots = robots;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 0; i<5; i++) {
+            int robot = i;
+            int number = 5 - i;
+            robots[robot].setupSanAntonio(number);
+            Thread thread = new lineaB(robots[robot], true);
+            thread.start();
+        }
+    }
+}
+
+class lineaA extends Thread {
+    private MetroMedellin robot;
+    private boolean Niquia = false;
+
+    public lineaA(MetroMedellin robot, boolean Niquia) {
+        this.robot = robot;
+        this.Niquia = Niquia;
+    }
+
+    @Override
+    public void run() {
+        while (!(robot.isCondicionActiva())) {
+            if (!Niquia) {
+                robot.lineaA2();
+                Niquia = true;
+            }
+            if (!(robot.isCondicionActiva())) {
+                robot.lineaA1();
+                Niquia = false;
+            }
+        }
+        if (!Niquia) {
+            robot.lineaA2();
+        }
+        robot.entrar();
     }
 }
 
 class lineaB extends Thread {
     private MetroMedellin robot;
+    private boolean SanAntonio = false;
 
-    public lineaB(MetroMedellin robot) {
+    public lineaB(MetroMedellin robot, boolean SanAntonio) {
         this.robot = robot;
+        this.SanAntonio = SanAntonio;
     }
 
     @Override
     public void run() {
-        robot.lineaB();
+        while (!(robot.isCondicionActiva())) {
+            if (!SanAntonio) {
+                robot.lineaB2();
+                SanAntonio = true;
+            }
+            if (!(robot.isCondicionActiva())) {
+                robot.lineaB1();
+                SanAntonio = false;
+            }
+        }
+        if (!SanAntonio) {
+            robot.lineaB2();
+        }
+        robot.move();
+        robot.move();
+        robot.move();
+        robot.move();
+        robot.turnRight();
     }
 }
