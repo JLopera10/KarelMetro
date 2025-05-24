@@ -172,6 +172,15 @@ public class MetroMedellin extends Robot implements Directions {
         activar(x); //
     }
 
+    public void esperarEstacionSimple(int x) {
+        esperar(x); //
+        wait(250);
+        move();
+        desactivar(x); //
+        wait(250);
+        activar(x); //
+    }
+
     public void turnRight() {
         turnLeft();
         turnLeft();
@@ -185,7 +194,7 @@ public class MetroMedellin extends Robot implements Directions {
             e.printStackTrace();
         }
     }
-    
+
     public void salir(int x) {
         if (x == 1) {
             moveUntilWall();
@@ -221,53 +230,53 @@ public class MetroMedellin extends Robot implements Directions {
         turnRight();
         move();
         Runnable[] camino = new Runnable[] {
-            () -> {
-                move();
-                turnLeft();
-            },
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> {
-                move();
-                turnLeft();
-            },
-            () -> {
-                move();
-                turnLeft();
-            },
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> {
-                move();
-                turnRight();
-            },
-            () -> move(),
-            () -> {
-                move();
-                turnLeft();
-            },
-            () -> move(), // x == 32
+                () -> {
+                    move();
+                    turnLeft();
+                },
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> {
+                    move();
+                    turnLeft();
+                },
+                () -> {
+                    move();
+                    turnLeft();
+                },
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> {
+                    move();
+                    turnRight();
+                },
+                () -> move(),
+                () -> {
+                    move();
+                    turnLeft();
+                },
+                () -> move(), // x == 32
         };
 
         for (int i = 0; i < num && i < camino.length; i++) {
@@ -310,197 +319,197 @@ public class MetroMedellin extends Robot implements Directions {
         turnLeft();
 
         Runnable[] camino = new Runnable[] {
-            () -> move(),                            // x == 1
-            () -> move(),                            // x == 2
-            () -> move(),                            // x == 3
-            () -> move(),                            // x == 4
-            () -> move(),                            // x == 5
-            () -> {
-                move();
-                turnRight();
-            },                                        // x == 6
-            () -> {
-                move();
-                turnLeft();
-            },                                        // x == 7
-            () -> move(),                            // x == 8
-            () -> move(),                            // x == 9
-            () -> {
-                move();
-                turnRight();
-            },                                        // x == 10
-            () -> move(),                            // x == 11
-            () -> {
-                move();
-                turnLeft();
-            },                                        // x == 12
-            () -> {
-                move();
-                turnLeft();
-            },                                        // x == 13
-            () -> move()                             // x == 14
+                () -> move(),                            // x == 1
+                () -> move(),                            // x == 2
+                () -> move(),                            // x == 3
+                () -> move(),                            // x == 4
+                () -> move(),                            // x == 5
+                () -> {
+                    move();
+                    turnRight();
+                },                                        // x == 6
+                () -> {
+                    move();
+                    turnLeft();
+                },                                        // x == 7
+                () -> move(),                            // x == 8
+                () -> move(),                            // x == 9
+                () -> {
+                    move();
+                    turnRight();
+                },                                        // x == 10
+                () -> move(),                            // x == 11
+                () -> {
+                    move();
+                    turnLeft();
+                },                                        // x == 12
+                () -> {
+                    move();
+                    turnLeft();
+                },                                        // x == 13
+                () -> move()                             // x == 14
         };
 
         for (int i = 0; i < x && i < camino.length; i++) {
             camino[i].run();
         }
-    }   
+    }
 
     public void setupEstrella(int x) {
         Runnable[] camino = new Runnable[] {
-            () -> {
-                move();
-            },   
-            () -> {
-                move();
-                turnRight();
-            },   
-            () -> {
-                move();
-                turnLeft();
-            },   
-            () -> {
-                move();
-            },   
-            () -> {
-                move();
-            },   
-            () -> {
-                move();
-                turnRight();
-            },   
-            () -> {
-                move();
-            },   
-            () -> {
-                move();
-                turnLeft();
-            },   
-            () -> {
-                move();
-                turnLeft();
-            },   
-            () -> {
-                wait(1000);
-                esperarSalida(0);
-                wait(250);
-                move();  // x == 10
-                wait(1000);
-            },   
+                () -> {
+                    move();
+                },
+                () -> {
+                    move();
+                    turnRight();
+                },
+                () -> {
+                    move();
+                    turnLeft();
+                },
+                () -> {
+                    move();
+                },
+                () -> {
+                    move();
+                },
+                () -> {
+                    move();
+                    turnRight();
+                },
+                () -> {
+                    move();
+                },
+                () -> {
+                    move();
+                    turnLeft();
+                },
+                () -> {
+                    move();
+                    turnLeft();
+                },
+                () -> {
+                    wait(1000);
+                    esperarSalida(0);
+                    wait(250);
+                    move();  // x == 10
+                    wait(1000);
+                },
         };
 
         for (int i = x - 1; i < camino.length; i++) {
-        camino[i].run();
+            camino[i].run();
         }
     }
 
     public void setupNiquia(int x) {
         Runnable[] camino = new Runnable[] {
-            () -> move(),   
-            () -> move(), 
-            () -> move(), 
-            () -> move(), 
-            () -> move(), 
-            () -> {
-                turnRight();
-                move();
-            },   
-            () -> move(), 
-            () -> move(),  
-            () -> {
-                turnLeft();
-                move();
-            },   
-            () -> {
-                turnLeft();
-                wait(1000);
-                esperarSalida(1);
-                wait(250);
-                move();  // x == 10
-                wait(1000);
-            },   
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> {
+                    turnRight();
+                    move();
+                },
+                () -> move(),
+                () -> move(),
+                () -> {
+                    turnLeft();
+                    move();
+                },
+                () -> {
+                    turnLeft();
+                    wait(1000);
+                    esperarSalida(1);
+                    wait(250);
+                    move();  // x == 10
+                    wait(1000);
+                },
         };
 
         for (int i = x - 1; i < camino.length; i++) {
-        camino[i].run();
+            camino[i].run();
         }
     }
 
     public void setupSanJavier(int x) {
         Runnable[] camino = new Runnable[] {
-            () -> {
-                move();
-                setupSanJavier = true;
-            },     
-            () -> {
-                move();
-                turnLeft();
-            },   
-            () -> {
-                move();
-                turnLeft();
-            },
-            () -> {
-                wait(1000);
-                esperarSalida(2);
-                wait(250);
-                move();
-            },
+                () -> {
+                    move();
+                    setupSanJavier = true;
+                },
+                () -> {
+                    move();
+                    turnLeft();
+                },
+                () -> {
+                    move();
+                    turnLeft();
+                },
+                () -> {
+                    wait(1000);
+                    esperarSalida(2);
+                    wait(250);
+                    move();
+                },
         };
 
         for (int i = x - 1; i < camino.length; i++) {
-        camino[i].run();
+            camino[i].run();
         }
     }
 
     public void setupSanAntonio(int x) {
         Runnable[] camino = new Runnable[] {
-            () -> {
-                move();
-                setupSanAntonio = true;
-            },   
-            () -> move(), 
-            () -> {
-                move();
-            },
-            () -> {
-                turnLeft();
-                esperarSalida(3);
-                wait(250);
-                move();
-                turnRight();
-                move();
-                turnLeft();
-                turnLeft();
-            },   
+                () -> {
+                    move();
+                    setupSanAntonio = true;
+                },
+                () -> move(),
+                () -> {
+                    move();
+                },
+                () -> {
+                    turnLeft();
+                    esperarSalida(3);
+                    wait(250);
+                    move();
+                    turnRight();
+                    move();
+                    turnLeft();
+                    turnLeft();
+                },
         };
 
         for (int i = x - 1; i < camino.length; i++) {
-        camino[i].run();
+            camino[i].run();
         }
     }
 
     public void startNiquiaA(int x) {
-        moveUntilWall();    
+        moveUntilWall();
         turnLeft();
         move();
 
         Runnable[] camino = new Runnable[] {
-            () -> move(),
-            () -> {
-                turnRight();
-                move();
-            },
-            () -> move(),
-            () -> move(),
-            () -> {
-                turnLeft();
-                move();
-            },
-            () -> {
-                turnLeft();
-                move();
-            }
+                () -> move(),
+                () -> {
+                    turnRight();
+                    move();
+                },
+                () -> move(),
+                () -> move(),
+                () -> {
+                    turnLeft();
+                    move();
+                },
+                () -> {
+                    turnLeft();
+                    move();
+                }
         };
 
         for (int i = 0; i < x && i < camino.length; i++) {
@@ -537,12 +546,12 @@ public class MetroMedellin extends Robot implements Directions {
         move();
         turnLeft();
         Runnable[] camino = new Runnable[] {
-            () -> move(),
-            () -> move(),
-            () -> move(),
-            () -> move(), // x = 4
+                () -> move(),
+                () -> move(),
+                () -> move(),
+                () -> move(), // x = 4
         };
-        
+
         for (int i = 0; i < x && i < camino.length; i++) {
             camino[i].run();
         }
@@ -575,24 +584,24 @@ public class MetroMedellin extends Robot implements Directions {
         turnLeft();
 
         Runnable[] camino = new Runnable[] {
-            () -> move(), // x == 1
-            () -> move(), // x == 2
-            () -> move(), // x == 3
-            () -> move(), // x == 4
-            () -> {
-                move();
-                turnRight();
-            }, // x == 5
-            () -> move(), // x == 6
-            () -> {
-                move();
-                turnLeft();
-            }, // x == 7
-            () -> {
-                move();
-                turnLeft();
-            }, // x == 8
-            () -> move() // x == 9
+                () -> move(), // x == 1
+                () -> move(), // x == 2
+                () -> move(), // x == 3
+                () -> move(), // x == 4
+                () -> {
+                    move();
+                    turnRight();
+                }, // x == 5
+                () -> move(), // x == 6
+                () -> {
+                    move();
+                    turnLeft();
+                }, // x == 7
+                () -> {
+                    move();
+                    turnLeft();
+                }, // x == 8
+                () -> move() // x == 9
         };
 
         for (int i = 0; i < x && i < camino.length; i++) {
@@ -640,25 +649,25 @@ public class MetroMedellin extends Robot implements Directions {
         }
 
         Runnable[] camino = new Runnable[] {
-            () -> move(), // x == 1
-            () -> move(), // x == 2
-            () -> move(), // x == 3
-            () -> move(), // x == 4
-            () -> {
-                turnLeft();
-                move();
-                turnRight();
-                move();
-                turnLeft();
-                turnLeft();
-            }
+                () -> move(), // x == 1
+                () -> move(), // x == 2
+                () -> move(), // x == 3
+                () -> move(), // x == 4
+                () -> {
+                    turnLeft();
+                    move();
+                    turnRight();
+                    move();
+                    turnLeft();
+                    turnLeft();
+                }
         };
 
         for (int i = 0; i < x && i < camino.length; i++) {
             camino[i].run();
         }
     }
-    
+
     public void lineaA1() {
         desactivarSalida(1); //
         pickBeeper();
@@ -1008,7 +1017,7 @@ public class MetroMedellin extends Robot implements Directions {
         turnLeft();
         esperarSalida(2); //
         wait(250);
-        move();  
+        move();
     }
 
     public void lineaAB() {
@@ -1030,7 +1039,7 @@ public class MetroMedellin extends Robot implements Directions {
         move();
         desactivar(49);
         activar(47);
-        esperarEstacion(8); //
+        esperarEstacionSimple(8); //
         activar(44);
         activar(49);
         move();
@@ -1040,27 +1049,27 @@ public class MetroMedellin extends Robot implements Directions {
         move();
         turnLeft();
         move();
-        esperarEstacion(9); //
+        esperarEstacionSimple(9); //
         move();
         turnRight();
         move();
         move();
         turnLeft();
         move();
-        esperarEstacion(10); //
+        esperarEstacionSimple(10); //
         move();
         turnRight();
         move();
         turnLeft();
         move();
         move();
-        esperarEstacion(11); //
+        esperarEstacionSimple(11); //
         move();
         move();
         move();
         turnRight();
         move();
-        esperarEstacion(12); //
+        esperarEstacionSimple(12); //
         move();
         turnLeft();
         move();
@@ -1074,84 +1083,84 @@ public class MetroMedellin extends Robot implements Directions {
         // Carga del mundo y configuración de la ventana
         World.readWorld("MetroMed.kwld");
         World.setVisible(true);
-        //World.setDelay(15); // VELOCIDAD VERDADERA
-        World.setDelay(1); // VELOCIDAD TEST
+        World.setDelay(15); // VELOCIDAD VERDADERA
+        //World.setDelay(1); // VELOCIDAD TEST
 
 
         MetroMedellin[] robotsLineaA = {
-            new MetroMedellin(32, 15, East, 0, Color.blue),
-            new MetroMedellin(32, 14, South, 0, Color.blue),
-            new MetroMedellin(33, 14, South, 0, Color.blue),
-            new MetroMedellin(34, 14, South, 0, Color.blue),
-            new MetroMedellin(34, 13, East, 0, Color.blue),
-            new MetroMedellin(34, 12, East, 0, Color.blue),
-            new MetroMedellin(34, 11, East, 0, Color.blue),
-            new MetroMedellin(34, 10, East, 0, Color.blue),
-            new MetroMedellin(34, 9, East, 0, Color.blue),
-            new MetroMedellin(34, 8, East, 0, Color.blue),
-            new MetroMedellin(34, 7, East, 0, Color.blue),
-            new MetroMedellin(34, 6, East, 0, Color.blue),
-            new MetroMedellin(34, 5, East, 0, Color.blue),
-            new MetroMedellin(34, 4, East, 0, Color.blue),
-            new MetroMedellin(34, 3, East, 0, Color.blue),
-            new MetroMedellin(34, 2, East, 0, Color.blue),
-            new MetroMedellin(34, 1, East, 0, Color.blue),
-            new MetroMedellin(35, 1, West, 0, Color.blue),
-            new MetroMedellin(35, 2, West, 0, Color.blue),
-            new MetroMedellin(35, 3, West, 0, Color.blue),
-            new MetroMedellin(35, 4, West, 0, Color.blue),
-            new MetroMedellin(35, 5, West, 0, Color.blue)
+                new MetroMedellin(32, 15, East, 0, Color.blue),
+                new MetroMedellin(32, 14, South, 0, Color.blue),
+                new MetroMedellin(33, 14, South, 0, Color.blue),
+                new MetroMedellin(34, 14, South, 0, Color.blue),
+                new MetroMedellin(34, 13, East, 0, Color.blue),
+                new MetroMedellin(34, 12, East, 0, Color.blue),
+                new MetroMedellin(34, 11, East, 0, Color.blue),
+                new MetroMedellin(34, 10, East, 0, Color.blue),
+                new MetroMedellin(34, 9, East, 0, Color.blue),
+                new MetroMedellin(34, 8, East, 0, Color.blue),
+                new MetroMedellin(34, 7, East, 0, Color.blue),
+                new MetroMedellin(34, 6, East, 0, Color.blue),
+                new MetroMedellin(34, 5, East, 0, Color.blue),
+                new MetroMedellin(34, 4, East, 0, Color.blue),
+                new MetroMedellin(34, 3, East, 0, Color.blue),
+                new MetroMedellin(34, 2, East, 0, Color.blue),
+                new MetroMedellin(34, 1, East, 0, Color.blue),
+                new MetroMedellin(35, 1, West, 0, Color.blue),
+                new MetroMedellin(35, 2, West, 0, Color.blue),
+                new MetroMedellin(35, 3, West, 0, Color.blue),
+                new MetroMedellin(35, 4, West, 0, Color.blue),
+                new MetroMedellin(35, 5, West, 0, Color.blue)
         };
         MetroMedellin[] robotsLineaB = {
-            new MetroMedellin(35, 6, West, 0, Color.green),
-            new MetroMedellin(35, 7, West, 0, Color.green),
-            new MetroMedellin(35, 8, West, 0, Color.green),
-            new MetroMedellin(35, 9, West, 0, Color.green),
-            new MetroMedellin(35, 10, West, 0, Color.green),
-            new MetroMedellin(35, 11, West, 0, Color.green),
-            new MetroMedellin(35, 12, West, 0, Color.green),
-            new MetroMedellin(35, 13, West, 0, Color.green),
-            new MetroMedellin(35, 14, West, 0, Color.green),
-            new MetroMedellin(35, 15, West, 0, Color.green)
+                new MetroMedellin(35, 6, West, 0, Color.green),
+                new MetroMedellin(35, 7, West, 0, Color.green),
+                new MetroMedellin(35, 8, West, 0, Color.green),
+                new MetroMedellin(35, 9, West, 0, Color.green),
+                new MetroMedellin(35, 10, West, 0, Color.green),
+                new MetroMedellin(35, 11, West, 0, Color.green),
+                new MetroMedellin(35, 12, West, 0, Color.green),
+                new MetroMedellin(35, 13, West, 0, Color.green),
+                new MetroMedellin(35, 14, West, 0, Color.green),
+                new MetroMedellin(35, 15, West, 0, Color.green)
         };
 
         List<Thread> threads = new ArrayList<>();
         Thread thread1 = new inicioNiquiaA(robotsLineaA[0], 6);
         thread1.start();
         threads.add(thread1);
-        
+
         for (int i = 1; i < 4; i++) {
             int number = 6 - i;
             Thread thread = new inicioNiquiaB(robotsLineaA[i], number);
-            //wait(1000);
+            wait(1000);
             thread.start();
             threads.add(thread);
         }
         for (int i = 4; i < 11; i++) {
             int number = 6 - i;
             Thread thread = new inicioNiquiaC(robotsLineaA[i], number);
-            //wait(1000);
+            wait(1000);
             thread.start();
             threads.add(thread);
         }
         for (int i = 11 ; i < 17; i++) {
             int number = 21 - i;
             Thread thread = new inicioEstrellaA(robotsLineaA[i], number);
-            //wait(1000);
+            wait(1000);
             thread.start();
             threads.add(thread);
         }
         for (int i = 17; i < 22; i++) {
             int number = 21 - i;
             Thread thread = new inicioEstrellaB(robotsLineaA[i], number);
-            //wait(1000);
+            wait(1000);
             thread.start();
             threads.add(thread);
         }
         for (int i = 0; i < 10; i++) {
             int number = i;
             Thread thread = new inicioSanJavierA(robotsLineaB[i], number);
-            //wait(1000);
+            wait(1000);
             thread.start();
             threads.add(thread);
         }
